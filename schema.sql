@@ -20,5 +20,8 @@ CREATE TABLE departments(
 CREATE TABLE sales(
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	item_id INT NOT NULL,
-	total_sales DECIMAL(10, 2)
+	total_sales DECIMAL(10, 2),
+	department INT NOT NULL,
+	FOREIGN KEY(item_id) REFERENCES inventory(id),
+	FOREIGN KEY (department) REFERENCES departments(id)
 )
