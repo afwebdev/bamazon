@@ -38,10 +38,38 @@ const getAllFromDB = prompt => {
 };
 
 const displayTop = results => {
-	console.clear();
-	// console.log([...results]);
+	// console.log(results);
+	let department = "";
 	results.forEach(dept => {
-		console.log(`Dept: ${dept.department_name} -- Sales: ${dept.total_sales}`);
+		switch (dept.department) {
+			case 1:
+				department = "Automotive";
+				break;
+			case 2:
+				department = "Beauty";
+				break;
+			case 3:
+				department = "Electronics";
+				break;
+			case 4:
+				department = "Home Decor";
+				break;
+			case 5:
+				department = "Food";
+				break;
+			case 6:
+				department = "Fitness";
+				break;
+			case 7:
+				department = "Garden";
+				break;
+			case 8:
+				department = "Clothing";
+				break;
+			default:
+				break;
+		}
+		console.log(`Dept: ${department} -- Sales: $${dept.total_sales}`);
 	});
 	getAllFromDB(generatePrompt);
 };
@@ -50,11 +78,11 @@ const getTopDepartments = cbResults => {
 	let topDepts;
 	connection.query(
 		`
-		SELECT department_name,
-		sum(total_sales) as total_sales 
+		SELECT inventory.department,
+		SUM(total_sale) as total_sales
 		FROM sales
-		INNER JOIN departments
-		ON sales.department = departments.id
+		INNER JOIN bamazon.inventory
+		on sales.item_id = inventory.id
 		GROUP BY department
 		ORDER BY total_sales DESC
 		`,
@@ -102,14 +130,17 @@ const generatePrompt = items => {
 			}
 		])
 		.then(async answers => {
+			console.clear();
+			console.log(answers);
 			if (answers.purchase) {
 				let id = answers.purchase;
+
 				await connection.query(`
 				UPDATE inventory
 				SET quantity = quantity - ${answers.amount}
 				WHERE id = ${id}`);
 
-				console.clear();
+				// console.clear();
 				console.log("***************************************");
 				console.log("\nPurchase Success! Thank You!\n");
 				console.log("***************************************");
@@ -119,5 +150,5 @@ const generatePrompt = items => {
 			}
 		});
 };
-
+console.clear();
 getAllFromDB(generatePrompt);
